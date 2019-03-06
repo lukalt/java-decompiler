@@ -24,6 +24,7 @@ import java.util.*;
 @ToString
 public class ClassFile implements CodeWriteable, Attributable {
 
+    @Getter
     private ConstantPool constantPool;
 
     private int minorVersion;
@@ -60,7 +61,6 @@ public class ClassFile implements CodeWriteable, Attributable {
         this.constantPool.read( reader );
 
         AccessFlag.fromBitmask( reader.readUnsignedShort(), this.flags );
-
         String fqClassName = ( (ConstantClass) this.constantPool.getItem( reader.readUnsignedShort() ) ).getClassName();
         int ind = fqClassName.lastIndexOf( "/" );
         if ( ind < 0 ) {

@@ -5,8 +5,14 @@ package me.lukas81298.jdecompile.bytecode.instruction;
  * @since 03.03.2019
  */
 public enum OperandType {
+
     INT,
     LONG,
     FLOAT,
-    REFERENCE
+    DOUBLE,
+    CHAR,
+    BYTE,
+    REFERENCE,
+    SHORT
+
 }

@@ -31,7 +31,7 @@ public class StoreSpec extends InstructionSpec {
 
         private final int id;
 
-        public StoreSpecShort( int id, String mnemonic, int typeId, int dataLen ) {
+        public StoreSpecShort( String mnemonic, int typeId, int dataLen, Integer id ) {
             super( mnemonic, typeId, dataLen );
             this.id = id;
         }

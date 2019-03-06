@@ -1,5 +1,6 @@
 package me.lukas81298.jdecompile.bytecode.method;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lukas81298.jdecompile.CodeWriteable;
@@ -10,11 +11,12 @@ import me.lukas81298.jdecompile.bytecode.Attributable;
 import me.lukas81298.jdecompile.bytecode.ClassFile;
 import me.lukas81298.jdecompile.bytecode.attribute.Attribute;
 import me.lukas81298.jdecompile.bytecode.attribute.CodeAttribute;
+import me.lukas81298.jdecompile.bytecode.cp.ConstantPool;
+import me.lukas81298.jdecompile.bytecode.instruction.Context;
+import me.lukas81298.jdecompile.bytecode.instruction.Instruction;
+import me.lukas81298.jdecompile.bytecode.instruction.Operand;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author lukas
@@ -87,7 +89,11 @@ public class MethodInfo implements CodeWriteable, Attributable {
         writer.writeln( level, getSignature( writer ) + " {" );
         if( this.hasAttribute( "Code" ) ) {
             CodeAttribute attr = this.getAttribute( "Code" );
-
+            Stack<Operand> stack = new Stack<>();
+            Context context = new Context( classFile.getConstantPool(), new TIntObjectHashMap<>() );
+            for ( Instruction instruction : attr.getInstructions().valueCollection() ) {
+                instruction.getInstructionSpec().process( level + 1, instruction, stack, writer, context );
+            }
         }
         writer.writeln( level, "}" );
         writer.writeln( level );

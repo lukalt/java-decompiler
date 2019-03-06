@@ -12,15 +12,14 @@ import java.util.Stack;
  * @author lukas
  * @since 03.03.2019
  */
-public class ReturnSpec extends InstructionSpec {
+public class AthrowSpec extends InstructionSpec {
 
-    public ReturnSpec( String mnemonic, int typeId, int dataLen ) {
+    public AthrowSpec( String mnemonic, int typeId, int dataLen ) {
         super( mnemonic, typeId, dataLen );
     }
 
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        stack.clear();
-        writer.writeln( level, "return;" );
+        writer.writeln( level, "throw " + stack.pop().getValue() + ";" );
     }
 }

@@ -1,6 +1,7 @@
 package me.lukas81298.jdecompile;
 
 import me.lukas81298.jdecompile.bytecode.AccessFlag;
+import me.lukas81298.jdecompile.bytecode.cp.ConstantPool;
 
 import java.util.Set;
 

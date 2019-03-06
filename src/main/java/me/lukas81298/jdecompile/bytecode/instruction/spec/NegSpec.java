@@ -10,17 +10,17 @@ import java.util.Stack;
 
 /**
  * @author lukas
- * @since 03.03.2019
+ * @since 04.03.2019
  */
-public class ReturnSpec extends InstructionSpec {
+public class NegSpec extends InstructionSpec {
 
-    public ReturnSpec( String mnemonic, int typeId, int dataLen ) {
+    public NegSpec( String mnemonic, int typeId, int dataLen ) {
         super( mnemonic, typeId, dataLen );
     }
 
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        stack.clear();
-        writer.writeln( level, "return;" );
+        Operand pop = stack.pop();
+        stack.push( new Operand( pop.getType(), "-" + pop.getValue() ) );
     }
 }

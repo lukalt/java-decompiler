@@ -31,8 +31,10 @@ public class InstructionTable {
             this.register( "lconst_" + l, (int) (0x09 + l), 0, ConstSpec.class, l, OperandType.LONG );
         }
         for ( float f = 0L; f <= 2; f++ ) {
-            this.register( "fconst_" + (int) f, (int) (0x11 + f), 0, ConstSpec.class, f, OperandType.FLOAT );
+            this.register( "fconst_" + (int) f, (int) (0x0a + f), 0, ConstSpec.class, f, OperandType.FLOAT );
         }
+
+        this.register( "bipush", 0x10, 1, BiPushSpec.class );
 
         this.register( "iload", 0x15, 1, LoadSpec.class );
         this.register( "lload", 0x16, 1, LoadSpec.class );
@@ -65,7 +67,14 @@ public class InstructionTable {
         this.register( "aload_2", 0x2c, 0, LoadSpec.LoadSpecShort.class, 2 );
         this.register( "aload_3", 0x2d, 0, LoadSpec.LoadSpecShort.class, 3 );
 
-        this.register( "aaload", 0x32, 1, AaloadSpec.class );
+        this.register( "iaload", 0x2e, 0, ArrLoadSpec.class, OperandType.INT );
+        this.register( "laload", 0x2f, 0, ArrLoadSpec.class, OperandType.LONG );
+        this.register( "faload", 0x30, 0, ArrLoadSpec.class, OperandType.FLOAT );
+        this.register( "daload", 0x31, 0, ArrLoadSpec.class, OperandType.DOUBLE );
+        this.register( "aaload", 0x32, 0, ArrLoadSpec.class, OperandType.REFERENCE );
+        this.register( "baload", 0x33, 0, ArrLoadSpec.class, OperandType.BYTE );
+        this.register( "caload", 0x34, 0, ArrLoadSpec.class, OperandType.CHAR );
+        this.register( "saload", 0x35, 0, ArrLoadSpec.class, OperandType.SHORT );
 
         this.register( "istore", 0x36, 1, StoreSpec.class );
         this.register( "lstore", 0x37, 1, StoreSpec.class );
@@ -98,9 +107,65 @@ public class InstructionTable {
         this.register( "astore_2", 0x4d, 0, StoreSpec.StoreSpecShort.class, 2 );
         this.register( "astore_3", 0x4e, 0, StoreSpec.StoreSpecShort.class, 3 );
 
+        this.register( "iastore", 0x4f, 0, ArrStoreSpec.class );
+        this.register( "lastore", 0x50, 0, ArrStoreSpec.class );
+        this.register( "fastore", 0x51, 0, ArrStoreSpec.class );
+        this.register( "dastore", 0x52, 0, ArrStoreSpec.class );
+        this.register( "aastore", 0x53, 0, ArrStoreSpec.class );
+        this.register( "bastore", 0x54, 0, ArrStoreSpec.class );
+        this.register( "castore", 0x55, 0, ArrStoreSpec.class );
+        this.register( "sastore", 0x56, 0, ArrStoreSpec.class );
 
+        this.register( "pop", 0x57, 0, PopSpec.class );
+        this.register( "pop2", 0x58, 0, Pop2Spec.class );
+        this.register( "swap", 0x5f , 0, SwapSpec.class);
+        this.register( "iadd", 0x60, 0, BinaryOpSpec.class, "+" );
+        this.register( "ladd", 0x61, 0, BinaryOpSpec.class, "+" );
+        this.register( "fadd", 0x62, 0, BinaryOpSpec.class, "+" );
+        this.register( "dadd", 0x63, 0, BinaryOpSpec.class, "+" );
+
+        this.register( "isub", 0x64, 0, BinaryOpSpec.class, "-" );
+        this.register( "lsub", 0x65, 0, BinaryOpSpec.class, "-" );
+        this.register( "fsub", 0x66, 0, BinaryOpSpec.class, "-" );
+        this.register( "dsub", 0x67, 0, BinaryOpSpec.class, "-" );
+
+        this.register( "imul", 0x68, 0, BinaryOpSpec.class, "*" );
+        this.register( "lmul", 0x69, 0, BinaryOpSpec.class, "*" );
+        this.register( "fmul", 0x6a, 0, BinaryOpSpec.class, "*" );
+        this.register( "dmul", 0x6b, 0, BinaryOpSpec.class, "*" );
+
+        this.register( "idiv", 0x6c, 0, BinaryOpSpec.class, "/" );
+        this.register( "ldiv", 0x6d, 0, BinaryOpSpec.class, "/" );
+        this.register( "fdiv", 0x6e, 0, BinaryOpSpec.class, "/" );
+        this.register( "ddiv", 0x6f, 0, BinaryOpSpec.class, "/" );
+
+        this.register( "irem", 0x70, 0, BinaryOpSpec.class, "%" );
+        this.register( "lrem", 0x71, 0, BinaryOpSpec.class, "%" );
+        this.register( "frem", 0x72, 0, BinaryOpSpec.class, "%" );
+        this.register( "drem", 0x73, 0, BinaryOpSpec.class, "%" );
+
+        this.register( "ineg", 0x74, 0, NegSpec.class );
+        this.register( "lneg", 0x75, 0, NegSpec.class );
+        this.register( "fneg", 0x76, 0, NegSpec.class );
+        this.register( "dneg", 0x77, 0, NegSpec.class );
+
+        this.register( "ishl", 0x78, 0, BinaryOpSpec.class, "<<" );
+        this.register( "lshl", 0x79, 0, BinaryOpSpec.class, "<<" );
+        this.register( "fshl", 0x7a, 0, BinaryOpSpec.class, "<<" );
+        this.register( "dshl", 0x7b, 0, BinaryOpSpec.class, "<<" );
+
+        this.register( "ishr", 0x7c, 0, BinaryOpSpec.class, ">>" );
+        this.register( "lshr", 0x7d, 0, BinaryOpSpec.class, ">>" );
+        this.register( "fshr", 0x7e, 0, BinaryOpSpec.class, ">>" );
+        this.register( "dshr", 0x7f, 0, BinaryOpSpec.class, ">" );
+
+
+        this.register( "areturn", 0xb0, 0, AReturnSpec.class );
+        this.register( "return", 0xb1, 0, ReturnSpec.class );
+        this.register( "athrow", 0xbf, 0, AthrowSpec.class );
         this.register( "arraylength", 0xBE, 0, ArrayLengthSpec.class );
 
+        this.register( "wide", 0xc4, 0, WideSpec.class );
 
     }
 

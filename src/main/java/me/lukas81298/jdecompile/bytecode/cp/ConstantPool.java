@@ -26,7 +26,7 @@ public class ConstantPool {
     public <K extends ConstantPoolItem> K getItem( int index ) throws DecompileException {
         ConstantPoolItem item = this.items[index - 1];
         if ( item == null ) {
-            throw new DecompileException( "Index " + index + " not present in constant pool." );
+            throw new DecompileException( "Index " + index + " not present in constant pool. " + this.items.length );
         }
         return (K) item;
     }
@@ -52,6 +52,7 @@ public class ConstantPool {
                 i++;
             }
         }
+        System.out.println( this.items.length );
     }
 
 

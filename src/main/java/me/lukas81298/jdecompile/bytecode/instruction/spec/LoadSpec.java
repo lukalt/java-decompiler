@@ -28,7 +28,7 @@ public class LoadSpec extends InstructionSpec {
 
         private final int id;
 
-        public LoadSpecShort( String mnemonic, int typeId, int dataLen, int id ) {
+        public LoadSpecShort( String mnemonic, int typeId, int dataLen, Integer id ) {
             super( mnemonic, typeId, dataLen );
             this.id = id;
         }

@@ -23,6 +23,7 @@ public class CodeAttribute extends Attribute implements Attributable {
 
     private ExceptionItem[] exceptions;
 
+    @Getter
     private TIntObjectMap<Instruction> instructions = new TIntObjectHashMap<>();
 
     @Getter

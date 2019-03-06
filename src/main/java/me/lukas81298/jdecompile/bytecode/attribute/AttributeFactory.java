@@ -21,6 +21,7 @@ public class AttributeFactory {
         this.registeredAttributes.put( "Synthetic", SyntheticAttribute.class );
         this.registeredAttributes.put( "SourceFile", SourceFileAttribute.class );
         this.registeredAttributes.put( "LocalVariableTable", LocalVariableTableAttribute.class );
+        this.registeredAttributes.put( "Deprecated", DeprecatedAttribute.class );
     }
 
     public Attribute create( String name, ConstantPool constantPool ) throws DecompileException {

@@ -14,7 +14,7 @@ public class Main {
 
     public static void main( String[] args ) {
         try {
-            File file = new File( "C://Users\\lukas\\Desktop\\ViaVersionPlugin.class" );
+            File file = new File( "C://Users\\lukas\\Desktop\\Test.class" );
             FileInputStream in = new FileInputStream( file );
             ClassFile classFile = new ClassFile();
             classFile.read( new ByteCodeReader( in ) );
