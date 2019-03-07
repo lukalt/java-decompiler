@@ -21,20 +21,23 @@ public class InstructionTable {
     public InstructionTable() {
         this.register( "nop", 0x00, 0, NopSpec.class );
         this.register( "aconst_null", 0x01, 0, ConstSpec.class, "null", OperandType.REFERENCE );
-
-        this.register( "iconst_m1", 0x02, 0, ConstSpec.class, -1, OperandType.INT );
+        this.register( "iconst_m1", 0x02, 0, ConstSpec.class, ( -1 ), OperandType.INT );
         // 0x03 to 0x08
         for ( int i = 0; i <= 5; i++ ) {
             this.register( "iconst_" + i, 0x03 + i, 0, ConstSpec.class, i, OperandType.INT );
         }
         for ( long l = 0L; l <= 1; l++ ) {
-            this.register( "lconst_" + l, (int) (0x09 + l), 0, ConstSpec.class, l, OperandType.LONG );
+            this.register( "lconst_" + l, (int) ( 0x09 + l ), 0, ConstSpec.class, l, OperandType.LONG );
         }
         for ( float f = 0L; f <= 2; f++ ) {
-            this.register( "fconst_" + (int) f, (int) (0x0a + f), 0, ConstSpec.class, f, OperandType.FLOAT );
+            this.register( "fconst_" + (int) f, (int) ( 0x0a + f ), 0, ConstSpec.class, f, OperandType.FLOAT );
         }
 
         this.register( "bipush", 0x10, 1, BiPushSpec.class );
+
+        this.register( "ldc", 0x12, 1, LdcSpec.class );
+        this.register( "ldc_w", 0x13, 2, LdcWideSpec.class );
+        this.register( "ldc2_w", 0x14, 2, LdcWideSpec.class );
 
         this.register( "iload", 0x15, 1, LoadSpec.class );
         this.register( "lload", 0x16, 1, LoadSpec.class );
@@ -118,7 +121,8 @@ public class InstructionTable {
 
         this.register( "pop", 0x57, 0, PopSpec.class );
         this.register( "pop2", 0x58, 0, Pop2Spec.class );
-        this.register( "swap", 0x5f , 0, SwapSpec.class);
+        this.register( "dup", 0x59, 0, DupSpec.class );
+        this.register( "swap", 0x5f, 0, SwapSpec.class );
         this.register( "iadd", 0x60, 0, BinaryOpSpec.class, "+" );
         this.register( "ladd", 0x61, 0, BinaryOpSpec.class, "+" );
         this.register( "fadd", 0x62, 0, BinaryOpSpec.class, "+" );
@@ -159,12 +163,49 @@ public class InstructionTable {
         this.register( "fshr", 0x7e, 0, BinaryOpSpec.class, ">>" );
         this.register( "dshr", 0x7f, 0, BinaryOpSpec.class, ">" );
 
+        this.register( "iinc", 0x84, 2, IincSpec.class );
+        this.register( "i2l", 0x85, 0, PrimitiveCastSpec.class, OperandType.LONG );
+        this.register( "i2f", 0x86, 0, PrimitiveCastSpec.class, OperandType.FLOAT );
+        this.register( "i2d", 0x87, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
 
+        this.register( "l2i", 0x88, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
+        this.register( "l2f", 0x89, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
+        this.register( "l2d", 0x8a, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
+
+
+        this.register( "f2i", 0x8b, 0, PrimitiveCastSpec.class, OperandType.INT );
+        this.register( "f2l", 0x8c, 0, PrimitiveCastSpec.class, OperandType.LONG );
+        this.register( "f2d", 0x8d, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
+        this.register( "d2i", 0x8e, 0, PrimitiveCastSpec.class, OperandType.INT );
+        this.register( "d2l", 0x8f, 0, PrimitiveCastSpec.class, OperandType.LONG );
+        this.register( "d2f", 0x90, 0, PrimitiveCastSpec.class, OperandType.FLOAT );
+
+        this.register( "i2b", 0x91, 0, PrimitiveCastSpec.class, OperandType.BYTE );
+        this.register( "i2c", 0x92, 0, PrimitiveCastSpec.class, OperandType.CHAR );
+        this.register( "i2s", 0x93, 0, PrimitiveCastSpec.class, OperandType.LONG );
+
+
+        this.register( "ireturn", 0xac, 0, AReturnSpec.class );
+        this.register( "lreturn", 0xad, 0, AReturnSpec.class );
+        this.register( "freturn", 0xae, 0, AReturnSpec.class );
+        this.register( "dreturn", 0xaf, 0, AReturnSpec.class );
         this.register( "areturn", 0xb0, 0, AReturnSpec.class );
         this.register( "return", 0xb1, 0, ReturnSpec.class );
+        this.register( "getstatic", 0xb2, 2, GetStaticSpec.class );
+        this.register( "putstatic", 0xb3, 2, PutStaticSpec.class );
+        this.register( "getfield", 0xb4, 2, GetFieldSpec.class );
+        this.register( "putfield", 0xb5, 2, PutFieldSpec.class );
+        this.register( "invokevirtual", 0xb6, 2, InvokeVirtualSpec.class );
+        this.register( "invokespecial", 0xb7, 2, InvokeSpecialSpec.class );
+        this.register( "invokestatic", 0xb8, 2, InvokeStaticSpec.class );
+        this.register( "invokeinterface", 0xb9, 3, InvokeInterfaceSpec.class );
+        this.register( "new", 0xbb, 2, NewSpec.class );
+        this.register( "anewarray", 0xbd, 2, ANewArraySpec.class );
+        this.register( "arraylength", 0xbe, 0, ArrayLengthSpec.class );
         this.register( "athrow", 0xbf, 0, AthrowSpec.class );
-        this.register( "arraylength", 0xBE, 0, ArrayLengthSpec.class );
 
+        this.register( "checkcast", 0xc0, 2, CheckCastSpec.class );
+        this.register( "instanceof", 0xc1, 2, InstanceOfSpec.class );
         this.register( "wide", 0xc4, 0, WideSpec.class );
 
     }

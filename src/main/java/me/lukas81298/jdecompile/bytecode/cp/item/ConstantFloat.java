@@ -28,6 +28,6 @@ public class ConstantFloat extends ConstantPoolItem {
 
     @Override
     public String asString() {
-        return Float.toString( this.value );
+        return this.value + "F";
     }
 }

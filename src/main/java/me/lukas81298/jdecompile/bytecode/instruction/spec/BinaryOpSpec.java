@@ -11,18 +11,18 @@ import java.util.Stack;
  */
 public class BinaryOpSpec extends InstructionSpec {
 
-    private final String seperator;
+    private final String separator;
 
-    public BinaryOpSpec( String mnemonic, int typeId, int dataLen, String seperator ) {
+    public BinaryOpSpec( String mnemonic, int typeId, int dataLen, String separator ) {
         super( mnemonic, typeId, dataLen );
-        this.seperator = seperator;
+        this.separator = separator;
     }
 
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
         Operand o1 = stack.pop();
         Operand o2 = stack.pop();
-        OperandType type = o1.getType();
-        stack.push( new Operand( type, o1.getValue() + " " + seperator + " " + o2.getValue() ) );
+        OperandType type = o2.getType();
+        stack.push( new Operand( type, o2.getValue() + " " + separator + " " + o1.getValue() ) );
     }
 }

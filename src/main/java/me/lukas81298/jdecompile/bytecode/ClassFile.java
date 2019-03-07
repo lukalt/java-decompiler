@@ -8,6 +8,7 @@ import me.lukas81298.jdecompile.SourceCodeWriter;
 import me.lukas81298.jdecompile.bytecode.attribute.Attribute;
 import me.lukas81298.jdecompile.bytecode.attribute.SourceFileAttribute;
 import me.lukas81298.jdecompile.bytecode.cp.ConstantPool;
+import me.lukas81298.jdecompile.bytecode.cp.ConstantPoolItem;
 import me.lukas81298.jdecompile.bytecode.cp.item.ConstantClass;
 import me.lukas81298.jdecompile.bytecode.field.FieldInfo;
 import me.lukas81298.jdecompile.bytecode.io.ByteCodeReader;
@@ -36,6 +37,7 @@ public class ClassFile implements CodeWriteable, Attributable {
     @Getter
     private String className;
     private String packageName;
+    @Getter
     private String superClassName;
 
     private FieldInfo[] fields;
@@ -142,7 +144,7 @@ public class ClassFile implements CodeWriteable, Attributable {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try ( SourceCodeWriter subWriter = new SourceCodeWriter( bos, writer.getIndentMode() ) ) {
-            subWriter.writeln( level, this.getSignature( writer ) );
+            subWriter.writeln( level, this.getSignature( subWriter ) );
             subWriter.writeln( level + 1 );
             boolean w = false;
             for ( FieldInfo field : this.fields ) {

@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class LocalVariableTableAttribute extends Attribute {
 
+    @Getter
     private final TIntObjectMap<LocalVariable> localVar = new TIntObjectHashMap<>();
 
     public LocalVariableTableAttribute( ConstantPool constantPool ) {

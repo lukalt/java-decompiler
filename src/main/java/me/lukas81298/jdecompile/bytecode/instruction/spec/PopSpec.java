@@ -20,6 +20,6 @@ public class PopSpec extends InstructionSpec {
 
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        stack.pop();
+        writer.writeln( level, stack.pop().getValue() + ";" );
     }
 }

@@ -1,5 +1,6 @@
 package me.lukas81298.jdecompile.bytecode.instruction.spec;
 
+import me.lukas81298.jdecompile.DecompileException;
 import me.lukas81298.jdecompile.SourceCodeWriter;
 import me.lukas81298.jdecompile.bytecode.instruction.Context;
 import me.lukas81298.jdecompile.bytecode.instruction.Instruction;
@@ -19,8 +20,14 @@ public class StoreSpec extends InstructionSpec {
     }
 
     @Override
-    public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        writer.writeln( level, context.getLocalVariable( getVariableId( instruction ) ) + " = " + stack.pop().getValue() + ";" );
+    public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) throws DecompileException {
+        final int varId = getVariableId( instruction );
+        final String name = context.getLocalVariable( varId );
+        if ( context.getScopeDefinedVars().add( name ) ) {
+            writer.writeln( level, context.getLocalVariableType( varId, writer ) + " " + name + " = " + stack.pop().getValue() + ";" );
+        } else {
+            writer.writeln( level, name + " = " + stack.pop().getValue() + ";" );
+        }
     }
 
     public int getVariableId( Instruction instruction ) {

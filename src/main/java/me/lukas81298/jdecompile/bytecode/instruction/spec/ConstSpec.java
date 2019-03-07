@@ -14,7 +14,31 @@ public class ConstSpec extends InstructionSpec {
     private final Object value;
     private final OperandType type;
 
-    public ConstSpec( String mnemonic, int typeId, int dataLen, int value, OperandType type ) {
+    public ConstSpec( String mnemonic, int typeId, int dataLen, String value, OperandType type ) {
+        super( mnemonic, typeId, dataLen );
+        this.value = value;
+        this.type = type;
+    }
+
+    public ConstSpec( String mnemonic, int typeId, int dataLen, Integer value, OperandType type ) {
+        super( mnemonic, typeId, dataLen );
+        this.value = value;
+        this.type = type;
+    }
+
+    public ConstSpec( String mnemonic, int typeId, int dataLen, Float value, OperandType type ) {
+        super( mnemonic, typeId, dataLen );
+        this.value = value;
+        this.type = type;
+    }
+
+    public ConstSpec( String mnemonic, int typeId, int dataLen, Long value, OperandType type ) {
+        super( mnemonic, typeId, dataLen );
+        this.value = value;
+        this.type = type;
+    }
+
+    public ConstSpec( String mnemonic, int typeId, int dataLen, Double value, OperandType type ) {
         super( mnemonic, typeId, dataLen );
         this.value = value;
         this.type = type;

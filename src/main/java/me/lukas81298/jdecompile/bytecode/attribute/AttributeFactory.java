@@ -16,6 +16,7 @@ public class AttributeFactory {
     private final Map<String, Class<? extends Attribute>> registeredAttributes = new HashMap<>();
 
     public AttributeFactory() {
+        this.registeredAttributes.put( "Code", CodeAttribute.class );
         this.registeredAttributes.put( "ConstantValue", ConstantValueAttribute.class );
         this.registeredAttributes.put( "Exceptions", ExceptionsAttribute.class );
         this.registeredAttributes.put( "Synthetic", SyntheticAttribute.class );

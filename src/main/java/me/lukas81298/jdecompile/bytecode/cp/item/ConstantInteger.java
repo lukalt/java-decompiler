@@ -31,8 +31,4 @@ public class ConstantInteger extends ConstantPoolItem {
         return Integer.toString( this.value );
     }
 
-    @Override
-    public byte getSize() {
-        return 2;
-    }
 }

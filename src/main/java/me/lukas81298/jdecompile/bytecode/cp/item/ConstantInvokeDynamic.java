@@ -36,4 +36,9 @@ public class ConstantInvokeDynamic extends ConstantPoolItem {
     public String asString() throws DecompileException {
         return this.bootstrapIndex + "$" + this.getType().asString();
     }
+
+    @Override
+    public byte getSize() {
+        return 2;
+    }
 }

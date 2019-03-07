@@ -1,5 +1,6 @@
 package me.lukas81298.jdecompile.bytecode.instruction.spec;
 
+import me.lukas81298.jdecompile.DecompileException;
 import me.lukas81298.jdecompile.SourceCodeWriter;
 import me.lukas81298.jdecompile.bytecode.instruction.Context;
 import me.lukas81298.jdecompile.bytecode.instruction.Instruction;
@@ -10,19 +11,16 @@ import java.util.Stack;
 
 /**
  * @author lukas
- * @since 03.03.2019
+ * @since 06.03.2019
  */
-public class Pop2Spec extends InstructionSpec {
+public class DupSpec extends InstructionSpec {
 
-    public Pop2Spec( String mnemonic, int typeId, int dataLen ) {
+    public DupSpec( String mnemonic, int typeId, int dataLen ) {
         super( mnemonic, typeId, dataLen );
     }
 
     @Override
-    public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        writer.writeln( level, stack.pop().getValue() + ";" );
-        if( !stack.isEmpty() ) {
-            writer.writeln( level, stack.pop().getValue() + ";" );
-        }
+    public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) throws DecompileException {
+        stack.push( stack.peek() );
     }
 }

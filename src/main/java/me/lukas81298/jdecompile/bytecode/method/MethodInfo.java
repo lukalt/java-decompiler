@@ -1,7 +1,7 @@
 package me.lukas81298.jdecompile.bytecode.method;
 
+import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lukas81298.jdecompile.CodeWriteable;
 import me.lukas81298.jdecompile.DecompileException;
@@ -11,7 +11,7 @@ import me.lukas81298.jdecompile.bytecode.Attributable;
 import me.lukas81298.jdecompile.bytecode.ClassFile;
 import me.lukas81298.jdecompile.bytecode.attribute.Attribute;
 import me.lukas81298.jdecompile.bytecode.attribute.CodeAttribute;
-import me.lukas81298.jdecompile.bytecode.cp.ConstantPool;
+import me.lukas81298.jdecompile.bytecode.attribute.LocalVariableTableAttribute;
 import me.lukas81298.jdecompile.bytecode.instruction.Context;
 import me.lukas81298.jdecompile.bytecode.instruction.Instruction;
 import me.lukas81298.jdecompile.bytecode.instruction.Operand;
@@ -42,7 +42,7 @@ public class MethodInfo implements CodeWriteable, Attributable {
     }
 
     private String getSignature( SourceCodeWriter writer ) throws DecompileException {
-        if( this.type == MethodType.CLASS_CONSTRUCTOR ) {
+        if ( this.type == MethodType.CLASS_CONSTRUCTOR ) {
             return "static {";
         }
         StringBuilder buf = new StringBuilder();
@@ -61,7 +61,7 @@ public class MethodInfo implements CodeWriteable, Attributable {
         }
         List<String> params = new ArrayList<>();
         String returnType = writer.parseMethodDescriptor( this.descriptor, params );
-        if( this.type == MethodType.METHOD ) {
+        if ( this.type == MethodType.METHOD ) {
             buf.append( returnType ).append( " " );
             buf.append( name );
         } else {
@@ -70,10 +70,15 @@ public class MethodInfo implements CodeWriteable, Attributable {
         buf.append( '(' );
         int j = 0;
         for ( String param : params ) {
-            if( j > 0 ) {
+            if ( j > 0 ) {
                 buf.append( ", " );
             }
-            buf.append( param ).append( " p" ).append( j );
+            if ( this.hasAttribute( "LocalVariableTable" ) ) {
+                LocalVariableTableAttribute localVariableTableAttribute = this.getAttribute( "LocalVariableTable" );
+                buf.append( param ).append( " " ).append( localVariableTableAttribute.getLocalVar().get( j ) );
+            } else {
+                buf.append( param ).append( " p" ).append( j );
+            }
             j++;
         }
         buf.append( ')' );
@@ -87,12 +92,49 @@ public class MethodInfo implements CodeWriteable, Attributable {
     @Override
     public void write( SourceCodeWriter writer, int level ) throws DecompileException {
         writer.writeln( level, getSignature( writer ) + " {" );
-        if( this.hasAttribute( "Code" ) ) {
+        if ( this.hasAttribute( "Code" ) ) {
             CodeAttribute attr = this.getAttribute( "Code" );
-            Stack<Operand> stack = new Stack<>();
-            Context context = new Context( classFile.getConstantPool(), new TIntObjectHashMap<>() );
-            for ( Instruction instruction : attr.getInstructions().valueCollection() ) {
-                instruction.getInstructionSpec().process( level + 1, instruction, stack, writer, context );
+            try {
+                Stack<Operand> stack = new Stack<>();
+                final TIntObjectMap<LocalVariableTableAttribute.LocalVariable> variables;
+                if ( attr.hasAttribute( "LocalVariableTable" ) ) {
+                    variables = ( (LocalVariableTableAttribute) attr.getAttribute( "LocalVariableTable" ) ).getLocalVar();
+                } else {
+                    variables = new TIntObjectHashMap<>();
+                }
+
+                Context context = new Context( classFile.getConstantPool(), variables, this.classFile );
+                for ( Instruction instruction : attr.getInstructions().values() ) {
+                    instruction.getInstructionSpec().process( level + 1, instruction, stack, writer, context );
+                }
+            } catch ( Throwable t ) {
+                t.printStackTrace();
+                writer.writeln( level + 1, "// Error decompiling: " + t.getMessage() );
+                switch ( writer.parseMethodDescriptor( this.descriptor, new LinkedList<>() ) ) {
+                    case "int":
+                        writer.writeln( level + 1, "return 0;" );
+                        break;
+                    case "long":
+                        writer.writeln( level + 1, "return 0L;" );
+                        break;
+                    case "double":
+                        writer.writeln( level + 1, "return 0D;" );
+                        break;
+                    case "float":
+                        writer.writeln( level + 1, "return 0F;" );
+                        break;
+                    case "char":
+                        writer.writeln( level + 1, "return '0';" );
+                        break;
+                    case "boolean":
+                        writer.writeln( level + 1, "return false;" );
+                        break;
+                    case "byte":
+                        writer.writeln( level + 1, "return (byte) 0;" );
+                        break;
+                    default:
+                        writer.writeln( level + 1, "return null;" );
+                }
             }
         }
         writer.writeln( level, "}" );

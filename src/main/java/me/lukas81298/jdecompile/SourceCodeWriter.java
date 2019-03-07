@@ -22,6 +22,7 @@ public class SourceCodeWriter implements Closeable {
     @Getter
     private final Set<String> importedClasses = new HashSet<>();
     private final Set<String> importedSimpleNames = new HashSet<>();
+
     public SourceCodeWriter( OutputStream outputStream, IndentMode indentMode ) {
         this.writer = new PrintWriter( outputStream );
         this.indentMode = indentMode;
@@ -96,6 +97,13 @@ public class SourceCodeWriter implements Closeable {
             default:
                 throw new DecompileException( "Invalid type indicator: " + first );
         }
+    }
+
+    public String removeBrackets( String input ) {
+        while ( input.startsWith( "(" ) && input.endsWith( ")" ) ) {
+            input = input.substring( 1, input.length() - 1 );
+        }
+        return input;
     }
 
     public String formatClassName( String name ) {

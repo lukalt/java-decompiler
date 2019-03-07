@@ -37,5 +37,6 @@ public class LoadSpec extends InstructionSpec {
         public int getVariableId( Instruction instruction ) {
             return this.id;
         }
+
     }
 }

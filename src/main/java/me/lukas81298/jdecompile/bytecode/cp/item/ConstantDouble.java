@@ -27,7 +27,7 @@ public class ConstantDouble extends ConstantPoolItem {
 
     @Override
     public String asString() {
-        return Double.toString( value );
+        return value + "D";
     }
 
     @Override

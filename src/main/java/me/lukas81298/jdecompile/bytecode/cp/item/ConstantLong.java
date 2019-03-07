@@ -28,6 +28,7 @@ public class ConstantLong extends ConstantPoolItem {
 
     @Override
     public String asString() {
-        return Long.toString( this.value );
+        return Long.toString( this.value ) + "L";
     }
+
 }

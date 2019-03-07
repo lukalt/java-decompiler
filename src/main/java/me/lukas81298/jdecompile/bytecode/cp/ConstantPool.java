@@ -15,7 +15,7 @@ import java.io.IOException;
 @ToString( of = "items" )
 public class ConstantPool {
 
-    private ConstantPoolItem[] items;
+    public ConstantPoolItem[] items;
     private final ConstantPoolItemFactory itemFactory;
 
     public ConstantPool() {
@@ -52,7 +52,6 @@ public class ConstantPool {
                 i++;
             }
         }
-        System.out.println( this.items.length );
     }
 
 

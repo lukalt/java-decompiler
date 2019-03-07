@@ -1,7 +1,5 @@
 package me.lukas81298.jdecompile.bytecode.attribute;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.lukas81298.jdecompile.DecompileException;
@@ -13,6 +11,7 @@ import me.lukas81298.jdecompile.bytecode.instruction.InstructionTable;
 import me.lukas81298.jdecompile.bytecode.io.ByteCodeReader;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,7 +23,7 @@ public class CodeAttribute extends Attribute implements Attributable {
     private ExceptionItem[] exceptions;
 
     @Getter
-    private TIntObjectMap<Instruction> instructions = new TIntObjectHashMap<>();
+    private Map<Integer, Instruction> instructions = new LinkedHashMap<>();
 
     @Getter
     private Map<String, Attribute> attributes;
@@ -45,23 +44,34 @@ public class CodeAttribute extends Attribute implements Attributable {
 
         InstructionTable instructionTable = InstructionTable.getInstance();
 
+        Instruction lastInstr = null;
         while ( toRead > 0 ) {
             int type = reader.readUnsignedByte();
+            toRead--;
             InstructionSpec spec = instructionTable.getSpec( type );
-            int[] addData = new int[]{ spec.getDataLen() };
+            if ( spec == null ) {
+                throw new DecompileException( "Invalid opcode " + type );
+            }
+            int[] addData = new int[spec.getDataLen()];
 
             for ( int i = 0; i < addData.length; i++ ) {
                 if ( isWide ) { // wide means 2 byte, otherwise 1
                     addData[i] = reader.readUnsignedShort();
+                    toRead -= 2;
                 } else {
                     addData[i] = reader.readUnsignedByte();
+                    toRead -= 1;
                 }
             }
 
-            toRead -= ( 1 + (isWide ? 2 : 1) * spec.getDataLen() ); // decrement the bytes read
-            this.instructions.put( pc, new Instruction( pc, spec, addData ) );
+            final Instruction value = new Instruction( pc, spec, addData );
+            lastInstr = value;
+            this.instructions.put( pc, value );
             pc = pc + 1 + spec.getDataLen();
             isWide = type == 0xC4; // interpret the next statement as wide if type is 0xC4 (mnemonic wide)
+        }
+        if( lastInstr != null ) {
+            lastInstr.setLast( true );
         }
 
         this.exceptions = new ExceptionItem[reader.readUnsignedShort()];

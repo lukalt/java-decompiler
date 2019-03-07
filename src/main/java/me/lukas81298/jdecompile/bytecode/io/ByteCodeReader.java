@@ -79,6 +79,7 @@ public class ByteCodeReader extends DataInputStream {
             if ( attribute != null ) {
                 ByteCodeReader reader = new ByteCodeReader( new ByteArrayInputStream( data ) );
                 attribute.read( reader );
+                map.put( name, attribute );
             }
         }
         return map;
