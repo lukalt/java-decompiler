@@ -44,10 +44,11 @@ public class ByteCodeReader extends DataInputStream {
     /**
      * Constructs a new field info objects and deserializes it from the underlying input stream
      *
-     * @param constantPool
+     * @param cf the corresponding class file
      * @return FieldInfo representing a field in class file
      */
-    public FieldInfo readFieldInfo( ConstantPool constantPool, ClassFile cf ) throws IOException, DecompileException {
+    public FieldInfo readFieldInfo( ClassFile cf ) throws IOException, DecompileException {
+        ConstantPool constantPool = cf.getConstantPool();
         return new FieldInfo( AccessFlag.fromBitmask( readUnsignedShort(), new HashSet<>() ),
                 constantPool.getUtf8( readUnsignedShort() ),
                 constantPool.getUtf8( readUnsignedShort() ),

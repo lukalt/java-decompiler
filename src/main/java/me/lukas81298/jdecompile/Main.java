@@ -19,7 +19,7 @@ public class Main {
             ClassFile classFile = new ClassFile();
             classFile.read( new ByteCodeReader( in ) );
 
-            try( final SourceCodeWriter writer = new SourceCodeWriter( System.out, IndentMode.SPACE_2 ) ) {
+            try( final SourceCodeWriter writer = new SourceCodeWriter( System.out, IndentMode.SPACE_4 ) ) {
                 classFile.write( writer, 0 );
             }
 

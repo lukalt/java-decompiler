@@ -30,11 +30,14 @@ public class InstructionTable {
             this.register( "lconst_" + l, (int) ( 0x09 + l ), 0, ConstSpec.class, l, OperandType.LONG );
         }
         for ( float f = 0L; f <= 2; f++ ) {
-            this.register( "fconst_" + (int) f, (int) ( 0x0a + f ), 0, ConstSpec.class, f, OperandType.FLOAT );
+            this.register( "fconst_" + (int) f, (int) ( 0x0b + f ), 0, ConstSpec.class, f, OperandType.FLOAT );
+        }
+        for ( float f = 0L; f <= 1; f++ ) {
+            this.register( "dconst_" + (int) f, (int) ( 0x0e + f ), 0, ConstSpec.class, f, OperandType.DOUBLE );
         }
 
         this.register( "bipush", 0x10, 1, BiPushSpec.class );
-
+        this.register( "sipush", 0x11, 2, SiPushSpec.class );
         this.register( "ldc", 0x12, 1, LdcSpec.class );
         this.register( "ldc_w", 0x13, 2, LdcWideSpec.class );
         this.register( "ldc2_w", 0x14, 2, LdcWideSpec.class );
@@ -172,7 +175,6 @@ public class InstructionTable {
         this.register( "l2f", 0x89, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
         this.register( "l2d", 0x8a, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
 
-
         this.register( "f2i", 0x8b, 0, PrimitiveCastSpec.class, OperandType.INT );
         this.register( "f2l", 0x8c, 0, PrimitiveCastSpec.class, OperandType.LONG );
         this.register( "f2d", 0x8d, 0, PrimitiveCastSpec.class, OperandType.DOUBLE );
@@ -184,7 +186,22 @@ public class InstructionTable {
         this.register( "i2c", 0x92, 0, PrimitiveCastSpec.class, OperandType.CHAR );
         this.register( "i2s", 0x93, 0, PrimitiveCastSpec.class, OperandType.LONG );
 
+        this.register( "ifeq", 0x99, 2, SimpleIfSpec.class, "!= 0"  );
+        this.register( "ifne", 0x9a, 2, SimpleIfSpec.class, "== 0"  );
+        this.register( "iflt", 0x9b, 2, SimpleIfSpec.class, ">= 0"  );
+        this.register( "ifge", 0x9c, 2, SimpleIfSpec.class, "< 0"  );
+        this.register( "ifgt", 0x9d, 2, SimpleIfSpec.class, "<= 0"  );
+        this.register( "ifle", 0x9e, 2, SimpleIfSpec.class, "> 0"  );
 
+        this.register( "if_icmpeq", 0x9f, 2, BinIfSpec.class, "!=" );
+        this.register( "if_icmpne", 0xa0, 2, BinIfSpec.class, "==" );
+        this.register( "if_icmplt", 0xa1, 2, BinIfSpec.class, ">=" );
+        this.register( "if_icmpge", 0xa2, 2, BinIfSpec.class, "<" );
+        this.register( "if_icmpgt", 0xa3, 2, BinIfSpec.class, "<=" );
+        this.register( "if_icmple", 0xa4, 2, BinIfSpec.class, ">" );
+        this.register( "if_acmpeq", 0xa5, 2, BinIfSpec.class, "!=" );
+        this.register( "if_acmpne", 0xa6, 2, BinIfSpec.class, "==" );
+        this.register( "goto", 0xa7, 2, GotoSpec.class );
         this.register( "ireturn", 0xac, 0, AReturnSpec.class );
         this.register( "lreturn", 0xad, 0, AReturnSpec.class );
         this.register( "freturn", 0xae, 0, AReturnSpec.class );
@@ -207,10 +224,17 @@ public class InstructionTable {
         this.register( "checkcast", 0xc0, 2, CheckCastSpec.class );
         this.register( "instanceof", 0xc1, 2, InstanceOfSpec.class );
         this.register( "wide", 0xc4, 0, WideSpec.class );
+        this.register( "ifnull", 0xc6, 2, SimpleIfSpec.class, "== null" );
+        this.register( "ifnotnull", 0xc7, 2, SimpleIfSpec.class, "!= null" );
+        this.register( "goto_w", 0xc8, 4, GotoWideSpec.class );
+
 
     }
 
     public void register( String mnemonic, int id, int len, Class<? extends InstructionSpec> clazz, Object... args ) {
+        if( this.instructions.containsKey( id ) ) {
+            throw new IllegalArgumentException( "Already registered: " + Integer.toHexString( id ) + ": " + clazz.getName() );
+        }
         Class<?>[] types = new Class[3 + args.length];
         Object[] values = new Object[3 + args.length];
         types[0] = String.class;

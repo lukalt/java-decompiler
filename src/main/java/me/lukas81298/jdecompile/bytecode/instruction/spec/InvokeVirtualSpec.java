@@ -40,7 +40,7 @@ public class InvokeVirtualSpec extends InstructionSpec {
 
     protected void handle( Stack<Operand> stack, String className, String name, String params, SourceCodeWriter writer, boolean isVoid, int level ) {
         if( isVoid ) {
-            writer.writeln( level, stack.pop().getValue() + "." + name + "(" + params + ")" );
+            writer.writeln( level, stack.pop().getValue() + "." + name + "(" + params + ");" );
         } else {
             stack.push( new Operand( OperandType.REFERENCE, stack.pop().getValue() + "." + name + "(" + params + ")" ) );
         }

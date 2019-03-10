@@ -16,6 +16,7 @@ public abstract class InstructionSpec {
 
     @Getter
     private final String mnemonic;
+    @Getter
     private final int typeId;
     @Getter
     private final int dataLen;

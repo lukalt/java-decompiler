@@ -81,7 +81,7 @@ public class ClassFile implements CodeWriteable, Attributable {
         }
         this.fields = new FieldInfo[reader.readUnsignedShort()];
         for ( int i = 0; i < this.fields.length; i++ ) {
-            this.fields[i] = reader.readFieldInfo( this.constantPool, this );
+            this.fields[i] = reader.readFieldInfo( this );
         }
         this.methods = new MethodInfo[reader.readUnsignedShort()];
         for ( int i = 0; i < this.methods.length; i++ ) {
