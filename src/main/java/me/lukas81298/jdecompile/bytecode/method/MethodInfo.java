@@ -14,7 +14,9 @@ import me.lukas81298.jdecompile.bytecode.Attributable;
 import me.lukas81298.jdecompile.bytecode.ClassFile;
 import me.lukas81298.jdecompile.bytecode.attribute.Attribute;
 import me.lukas81298.jdecompile.bytecode.attribute.CodeAttribute;
+import me.lukas81298.jdecompile.bytecode.attribute.ExceptionsAttribute;
 import me.lukas81298.jdecompile.bytecode.attribute.LocalVariableTableAttribute;
+import me.lukas81298.jdecompile.bytecode.cp.item.ConstantClass;
 import me.lukas81298.jdecompile.bytecode.flow.CFG;
 import me.lukas81298.jdecompile.bytecode.flow.InstructionEntry;
 import me.lukas81298.jdecompile.bytecode.flow.struct.*;
@@ -92,6 +94,19 @@ public class MethodInfo implements CodeWriteable, Attributable {
             j++;
         }
         buf.append( ')' );
+        if ( this.hasAttribute( "Exceptions" ) ) {
+            ExceptionsAttribute attribute = this.getAttribute( "Exceptions" );
+            if( attribute.getExceptions().length > 0 ) {
+                int i = 0;
+                for ( ConstantClass exception : attribute.getExceptions() ) {
+                    if( i > 0 ) {
+                        buf.append( ", " );
+                    }
+                    buf.append( writer.formatClassName( exception.getClassName() ) );
+                    i++;
+                }
+            }
+        }
         return buf.toString();
     }
 
