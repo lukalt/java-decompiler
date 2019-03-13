@@ -141,7 +141,6 @@ public class MethodInfo implements CodeWriteable, Attributable {
                         int c = currentInstruction.getPc() + ( (AbstractIfSpec) currentInstruction.getInstructionSpec() ).getBranch( currentInstruction );
                         if( target == -1 || target == c ) {
                             target = c;
-                            System.out.println( "COND:  " + currentInstruction + " " + instructionBuffer );
                             conditions.add( new InstructionEntry( instructionBuffer, currentInstruction ) );
                             instructionBuffer = new LinkedList<>();
                         } else {
@@ -221,7 +220,6 @@ public class MethodInfo implements CodeWriteable, Attributable {
 
                 Stack<Operand> stack = new Stack<>();
                 List<Structure> structures = this.preprocess( level + 1, new ArrayList<>( attr.getInstructions().values() ) );
-                System.out.println( structures );
                 for ( Structure structure : structures ) {
                     structure.process( stack, writer, context );
                 }

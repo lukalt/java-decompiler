@@ -27,7 +27,6 @@ public class WhileStructure extends Structure {
         super( level );
         this.conditions = conditions;
         this.body = body;
-        System.out.println( "WHILE-BODY: " + this.body );
     }
 
     @Override

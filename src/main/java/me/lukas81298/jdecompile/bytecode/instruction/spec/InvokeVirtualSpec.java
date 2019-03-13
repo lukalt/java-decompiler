@@ -3,6 +3,7 @@ package me.lukas81298.jdecompile.bytecode.instruction.spec;
 import me.lukas81298.jdecompile.DecompileException;
 import me.lukas81298.jdecompile.SourceCodeWriter;
 import me.lukas81298.jdecompile.bytecode.cp.item.AbstractConstantRef;
+import me.lukas81298.jdecompile.bytecode.cp.item.ConstantClass;
 import me.lukas81298.jdecompile.bytecode.instruction.*;
 
 import java.util.ArrayList;
@@ -35,11 +36,11 @@ public class InvokeVirtualSpec extends InstructionSpec {
             }
             sb.append( writer.removeBrackets( Objects.toString( stack.pop().getValue() ) ) );
         }
-        this.handle( stack, writer.formatClassName( ref.getClassInfo().getClassName() ), name, sb.toString(), writer, returnType.equals( "void" ), level );
+        this.handle( stack, ref.getClassInfo(), name, sb.toString(), writer, returnType.equals( "void" ), level );
     }
 
-    protected void handle( Stack<Operand> stack, String className, String name, String params, SourceCodeWriter writer, boolean isVoid, int level ) {
-        if( isVoid ) {
+    protected void handle( Stack<Operand> stack, ConstantClass classInfo, String name, String params, SourceCodeWriter writer, boolean isVoid, int level ) throws DecompileException {
+        if ( isVoid ) {
             writer.writeln( level, stack.pop().getValue() + "." + name + "(" + params + ");" );
         } else {
             stack.push( new Operand( OperandType.REFERENCE, stack.pop().getValue() + "." + name + "(" + params + ")" ) );

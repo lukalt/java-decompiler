@@ -33,8 +33,6 @@ public class IfStructure extends Structure {
             throw new DecompileException( this.condition + " is not an if statement" );
         }
         AbstractIfSpec ifCond = (AbstractIfSpec) this.condition.getInstructionSpec();
-        System.out.println( this.condition );
-        System.out.println( stack );
         writer.writeln( this.level, "if (" + String.format( ifCond.getCondition( this.condition ), ifCond.getParams( stack ) ) + ") {" );
         for ( Structure structure : this.body ) {
             structure.process( stack, writer, context );

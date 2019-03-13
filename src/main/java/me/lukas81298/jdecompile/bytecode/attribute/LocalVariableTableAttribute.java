@@ -1,7 +1,5 @@
 package me.lukas81298.jdecompile.bytecode.attribute;
 
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
@@ -11,8 +9,6 @@ import me.lukas81298.jdecompile.bytecode.cp.ConstantPool;
 import me.lukas81298.jdecompile.bytecode.io.ByteCodeReader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author lukas
@@ -23,7 +19,6 @@ public class LocalVariableTableAttribute extends Attribute {
     @Getter
     private final TIntObjectMap<LocalVariable> localVar = new TIntObjectHashMap<>();
     private int maxKey = 0;
-    private final List<LocalVariable> readOrder = new ArrayList<>();
 
     public LocalVariableTableAttribute( ConstantPool constantPool ) {
         super( constantPool );
@@ -41,12 +36,11 @@ public class LocalVariableTableAttribute extends Attribute {
             if ( i1 > maxKey ) {
                 maxKey = i1;
             }
-            this.readOrder.add( variable );
         }
     }
 
     public String getParameterName( int par ) {
-        return this.readOrder.get( par + 1 ).getName();
+        return this.localVar.get( par + 1 ).getName();
     }
 
     @RequiredArgsConstructor

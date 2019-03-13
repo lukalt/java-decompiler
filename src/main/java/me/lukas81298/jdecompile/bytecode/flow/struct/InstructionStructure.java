@@ -25,7 +25,6 @@ public class InstructionStructure extends Structure {
 
     @Override
     public void process( Stack<Operand> stack, SourceCodeWriter writer, Context context ) throws DecompileException {
-        System.out.println( instruction );
         this.instruction.getInstructionSpec().process( this.level, this.instruction, stack, writer, context );
     }
 
