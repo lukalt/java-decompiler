@@ -24,9 +24,9 @@ public class StoreSpec extends InstructionSpec {
         final int varId = getVariableId( instruction );
         final String name = context.getLocalVariable( varId );
         if ( context.getScopeDefinedVars().add( name ) ) {
-            writer.writeln( level, context.getLocalVariableType( varId, writer ) + " " + name + " = " + stack.pop().getValue() + ";" );
+            writer.writeln( level, context.getLineNumber( instruction ), context.getLocalVariableType( varId, writer ) + " " + name + " = " + stack.pop().getValue() + ";" );
         } else {
-            writer.writeln( level, name + " = " + stack.pop().getValue() + ";" );
+            writer.writeln( level, context.getLineNumber( instruction ), name + " = " + stack.pop().getValue() + ";" );
         }
     }
 

@@ -23,19 +23,21 @@ public class AttributeFactory {
         this.registeredAttributes.put( "SourceFile", SourceFileAttribute.class );
         this.registeredAttributes.put( "LocalVariableTable", LocalVariableTableAttribute.class );
         this.registeredAttributes.put( "Deprecated", DeprecatedAttribute.class );
+        this.registeredAttributes.put( "LineNumberTable", LineNumberTableAttribute.class );
+        this.registeredAttributes.put( "RuntimeVisibleAnnotations", RuntimeVisibleAnnotationsAttribute.class );
     }
 
     public Attribute create( String name, ConstantPool constantPool ) throws DecompileException {
         Class<? extends Attribute> clazz = this.registeredAttributes.get( name );
         if ( clazz == null ) {
-            return null; // todo: throw exception
+            return null; // unknown attribute, will be skipped
         }
         try {
             Constructor<? extends Attribute> constructor = clazz.getDeclaredConstructor( ConstantPool.class );
             return constructor.newInstance( constantPool );
         } catch ( Throwable t ) {
             t.printStackTrace();
-            throw new DecompileException( "Cannot instanciate " + clazz.getSimpleName() );
+            throw new DecompileException( "Cannot instantiate " + clazz.getSimpleName() );
         }
     }
 

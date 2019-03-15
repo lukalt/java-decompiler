@@ -25,7 +25,7 @@ public class PutFieldSpec extends InstructionSpec {
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) throws DecompileException {
         final Object v1 = stack.pop().getValue();
         final Object v2 = stack.pop().getValue();
-        writer.writeln( level,
+        writer.writeln( level, context.getLineNumber( instruction ),
                 v2 + "." + ( (AbstractConstantRef.ConstantFieldRef) context.getConstantPool().getItem( instruction.getUnsignedShort( 0 ) ) ).getNameAndType().getName() + " = " +
                         writer.removeBrackets( Objects.toString( v1 ) ) + ";" );
     }

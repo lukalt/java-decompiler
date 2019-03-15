@@ -178,7 +178,7 @@ public class CFG {
                 if ( i > 0 ) {
                     builder.append( ' ' );
                 }
-                builder.append( list.contains( i ) ? '1' : '0' );
+                builder.append( (list != null && list.contains( i ) ) ? '1' : '0' );
             }
         }
         return builder.toString();

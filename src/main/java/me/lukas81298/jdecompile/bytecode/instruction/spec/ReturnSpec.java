@@ -22,7 +22,7 @@ public class ReturnSpec extends InstructionSpec {
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
         stack.clear();
         if( !instruction.isLast() ) {
-            writer.writeln( level, "return;" );
+            writer.writeln( level, context.getLineNumber( instruction ),"return;" );
         }
     }
 }

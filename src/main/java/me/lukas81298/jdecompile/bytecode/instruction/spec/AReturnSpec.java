@@ -20,6 +20,6 @@ public class AReturnSpec extends InstructionSpec {
 
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        writer.writeln( level, "return " + stack.pop().getValue() + ";" );
+        writer.writeln( level, context.getLineNumber( instruction ),"return " + stack.pop().getValue() + ";" );
     }
 }

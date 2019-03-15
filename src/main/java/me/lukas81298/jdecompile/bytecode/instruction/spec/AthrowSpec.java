@@ -20,6 +20,6 @@ public class AthrowSpec extends InstructionSpec {
 
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) {
-        writer.writeln( level, "throw " + stack.pop().getValue() + ";" );
+        writer.writeln( level, context.getLineNumber( instruction ), "throw " + stack.pop().getValue() + ";" );
     }
 }

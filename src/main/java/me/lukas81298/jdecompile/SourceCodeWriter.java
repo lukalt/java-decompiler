@@ -1,11 +1,15 @@
 package me.lukas81298.jdecompile;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Closeable;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author lukas
@@ -18,6 +22,9 @@ public class SourceCodeWriter implements Closeable {
     private final PrintWriter writer;
     @Getter
     private final IndentMode indentMode;
+    @Getter
+    @Setter
+    private boolean lineNumbers = false;
 
     @Getter
     private final Set<String> importedClasses = new HashSet<>();
@@ -32,12 +39,20 @@ public class SourceCodeWriter implements Closeable {
         this.writer.close();
     }
 
+    public void writeln( int level, int line, String s ) {
+        if ( this.lineNumbers && line >= 0 ) {
+            this.writer.println( this.indentMode.indent( level ) + s + " //" + line );
+        } else {
+            this.writer.println( this.indentMode.indent( level ) + s );
+        }
+    }
+
     public void writeln( int level ) {
-        this.writer.println( this.indentMode.indent( level ) );
+        this.writeln( level, -1, "" );
     }
 
     public void writeln( int level, String s ) {
-        this.writer.println( this.indentMode.indent( level ) + s );
+        this.writeln( level, -1, s );
     }
 
     public String parseType( String input ) throws DecompileException {
@@ -118,7 +133,7 @@ public class SourceCodeWriter implements Closeable {
             if ( this.importedClasses.contains( name ) ) {
                 return clazz;
             }
-            if( !this.importedSimpleNames.add( clazz ) ) {
+            if ( !this.importedSimpleNames.add( clazz ) ) {
                 return name;
             }
             this.importedClasses.add( name );

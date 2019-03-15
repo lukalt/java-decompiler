@@ -25,9 +25,17 @@ public class Test {
             System.out.println( "GERADE" );
         } else {
             System.out.println( "UNGERADE" );
-
         }
+    }
 
+    private boolean testInclusive( boolean a, boolean b ) {
+        boolean inclusive = a || b;
+        return inclusive;
+    }
+
+    private void testOr( boolean a, boolean b ) {
+        boolean inclusive2 = a | b;
+        boolean excluse = a ^ b;
     }
 
     private int m( int x, int y ) {

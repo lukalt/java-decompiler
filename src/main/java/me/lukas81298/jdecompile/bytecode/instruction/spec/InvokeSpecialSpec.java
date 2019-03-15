@@ -37,18 +37,19 @@ public class InvokeSpecialSpec extends InstructionSpec {
         }
         if ( ref.getClassInfo().getClassName().equals( context.getClassFile().getSuperClassName() ) ) {
             if ( name.equals( "<init>" ) ) {
-                writer.writeln( level, "super(" + sb + ");" );
+                writer.writeln( level, context.getLineNumber( instruction ), "super(" + sb + ");" );
             } else {
-                writer.writeln( level, "super." + name + "(" + sb + ");" );
+                writer.writeln( level, context.getLineNumber( instruction ), "super." + name + "(" + sb + ");" );
             }
             stack.pop();
         } else {
             Operand operand = stack.pop();
             if ( name.equals( "<init>" ) && operand.getType() == OperandType.TYPE_REF ) {
-                stack.push( new Operand( OperandType.REFERENCE, "new " + operand.getValue() + "(" + sb.toString() + ")" ) );
-                stack.pop(); // we got one more type than we need on the stack, remove it to prevent further errors
+                final String value = "new " + operand.getValue() + "(" + sb.toString() + ")";
+                stack.push( new Operand( OperandType.REFERENCE, value ) );
             } else {
-                stack.push( new Operand( OperandType.REFERENCE, operand.getValue() + "." + name + "(" + sb.toString() + ")" ) );
+                System.out.println( name );
+                stack.push( new Operand( OperandType.REFERENCE, "new_ " + operand.getValue() + "." + name + "(" + sb.toString() + ")" ) );
             }
         }
 

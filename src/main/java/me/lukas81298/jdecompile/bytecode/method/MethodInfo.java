@@ -12,10 +12,7 @@ import me.lukas81298.jdecompile.SourceCodeWriter;
 import me.lukas81298.jdecompile.bytecode.AccessFlag;
 import me.lukas81298.jdecompile.bytecode.Attributable;
 import me.lukas81298.jdecompile.bytecode.ClassFile;
-import me.lukas81298.jdecompile.bytecode.attribute.Attribute;
-import me.lukas81298.jdecompile.bytecode.attribute.CodeAttribute;
-import me.lukas81298.jdecompile.bytecode.attribute.ExceptionsAttribute;
-import me.lukas81298.jdecompile.bytecode.attribute.LocalVariableTableAttribute;
+import me.lukas81298.jdecompile.bytecode.attribute.*;
 import me.lukas81298.jdecompile.bytecode.cp.item.ConstantClass;
 import me.lukas81298.jdecompile.bytecode.flow.CFG;
 import me.lukas81298.jdecompile.bytecode.flow.InstructionEntry;
@@ -51,7 +48,7 @@ public class MethodInfo implements CodeWriteable, Attributable {
         this.type = MethodType.byMethodName( this.name );
     }
 
-    private String getSignature( SourceCodeWriter writer ) throws DecompileException {
+    private String getSignature( SourceCodeWriter writer, List<String> pars ) throws DecompileException {
         if ( this.type == MethodType.CLASS_CONSTRUCTOR ) {
             return "static {";
         }
@@ -87,7 +84,9 @@ public class MethodInfo implements CodeWriteable, Attributable {
             CodeAttribute codeAttribute;
             if ( this.hasAttribute( "Code" ) && ( codeAttribute = this.getAttribute( "Code" ) ).hasAttribute( "LocalVariableTable" ) ) {
                 LocalVariableTableAttribute localVariableTableAttribute = codeAttribute.getAttribute( "LocalVariableTable" );
-                buf.append( param ).append( " " ).append( localVariableTableAttribute.getParameterName( j ) );
+                final String varName = localVariableTableAttribute.getParameterName( j );
+                buf.append( param ).append( " " ).append( varName );
+                pars.add( varName );
             } else {
                 buf.append( param ).append( " p" ).append( j );
             }
@@ -96,10 +95,10 @@ public class MethodInfo implements CodeWriteable, Attributable {
         buf.append( ')' );
         if ( this.hasAttribute( "Exceptions" ) ) {
             ExceptionsAttribute attribute = this.getAttribute( "Exceptions" );
-            if( attribute.getExceptions().length > 0 ) {
+            if ( attribute.getExceptions().length > 0 ) {
                 int i = 0;
                 for ( ConstantClass exception : attribute.getExceptions() ) {
-                    if( i > 0 ) {
+                    if ( i > 0 ) {
                         buf.append( ", " );
                     }
                     buf.append( writer.formatClassName( exception.getClassName() ) );
@@ -116,6 +115,10 @@ public class MethodInfo implements CodeWriteable, Attributable {
 
     private List<Structure> preprocess( int level, List<Instruction> instructions ) throws DecompileException {
         CFG cfg = new CFG( instructions );
+        /*System.out.println( getName() );
+        for ( String s : cfg.toAdjMatrix().split( "\n" ) ) {
+            System.out.println( s );
+        }*/
         TIntIntMap subBlocksStart = new TIntIntHashMap();
 
         for ( TIntList c : cfg.findSccs() ) {
@@ -134,8 +137,8 @@ public class MethodInfo implements CodeWriteable, Attributable {
 
         ListIterator<Instruction> iterator = instructions.listIterator();
 
-       while ( iterator.hasNext() ) {
-           Instruction instruction = iterator.next();
+        while ( iterator.hasNext() ) {
+            Instruction instruction = iterator.next();
             if ( untilLoop >= 0 && instruction.getPc() <= untilLoop ) {
                 currentInstructions.add( instruction );
                 continue;
@@ -154,7 +157,7 @@ public class MethodInfo implements CodeWriteable, Attributable {
                 for ( Instruction currentInstruction : currentInstructions ) {
                     if ( currentInstruction.getInstructionSpec() instanceof AbstractIfSpec ) {
                         int c = currentInstruction.getPc() + ( (AbstractIfSpec) currentInstruction.getInstructionSpec() ).getBranch( currentInstruction );
-                        if( target == -1 || target == c ) {
+                        if ( target == -1 || target == c ) {
                             target = c;
                             conditions.add( new InstructionEntry( instructionBuffer, currentInstruction ) );
                             instructionBuffer = new LinkedList<>();
@@ -178,15 +181,15 @@ public class MethodInfo implements CodeWriteable, Attributable {
                     ifEndPc = instruction.getPc() + ( (AbstractIfSpec) instruction.getInstructionSpec() ).getBranch( instruction );
                     ifInstructions.add( instruction );
                 } else if ( ifEndPc != -1 && instruction.getPc() < ifEndPc ) { // block still "active"?
-                    if( instruction.getInstructionSpec() instanceof AbstractGotoSpec
+                    if ( instruction.getInstructionSpec() instanceof AbstractGotoSpec
                             && iterator.hasNext() && instructions.get( iterator.nextIndex() ).getPc() == ifEndPc ) {
                         elseEndPc = instruction.getPc() + ( (AbstractGotoSpec) instruction.getInstructionSpec() ).getBranch( instruction );
                     } else {
                         ifInstructions.add( instruction );
                     }
-                } else if( ifEndPc != -1 ) {
+                } else if ( ifEndPc != -1 ) {
                     ifEndPc = -1;
-                    if( elseEndPc != -1 ) {
+                    if ( elseEndPc != -1 ) {
                         elseInstructions.add( instruction );
                     } else {
                         iterator.previous(); // run the loop on this instruction again!
@@ -194,9 +197,9 @@ public class MethodInfo implements CodeWriteable, Attributable {
                         out.add( structure );
                         ifInstructions.clear();
                     }
-                } else if( elseEndPc != -1 && instruction.getPc() < elseEndPc ) {
+                } else if ( elseEndPc != -1 && instruction.getPc() < elseEndPc ) {
                     elseInstructions.add( instruction );
-                } else if( elseEndPc != -1 ) {
+                } else if ( elseEndPc != -1 ) {
                     elseInstructions.add( instruction );
                     IfElseStructure structure = new IfElseStructure( level, ifInstructions.get( 0 ),
                             preprocess( level + 1, ifInstructions.subList( 1, ifInstructions.size() ) ),
@@ -220,7 +223,8 @@ public class MethodInfo implements CodeWriteable, Attributable {
         if ( this.getFlags().contains( AccessFlag.ACC_SUPER ) ) {
             writer.writeln( level, "@Override" );
         }
-        writer.writeln( level, getSignature( writer ) + " {" );
+        List<String> paramNames = new ArrayList<>();
+        writer.writeln( level, getSignature( writer, paramNames ) + " {" );
         if ( this.hasAttribute( "Code" ) ) {
             CodeAttribute attr = this.getAttribute( "Code" );
             try {
@@ -230,9 +234,17 @@ public class MethodInfo implements CodeWriteable, Attributable {
                 } else {
                     variables = new TIntObjectHashMap<>();
                 }
+                TIntIntMap lineNumberMap;
+                if ( attr.hasAttribute( "LineNumberTable" ) ) {
+                    lineNumberMap = ( (LineNumberTableAttribute) attr.getAttribute( "LineNumberTable" ) ).getLineNumbers();
+                } else {
+                    lineNumberMap = new TIntIntHashMap();
+                }
 
-                Context context = new Context( classFile.getConstantPool(), variables, this.classFile );
-
+                Context context = new Context( classFile.getConstantPool(), variables, lineNumberMap, this.classFile );
+                for ( String paramName : paramNames ) {
+                    context.getScopeDefinedVars().add( paramName );
+                }
                 Stack<Operand> stack = new Stack<>();
                 List<Structure> structures = this.preprocess( level + 1, new ArrayList<>( attr.getInstructions().values() ) );
                 for ( Structure structure : structures ) {

@@ -22,14 +22,14 @@ public class IincSpec extends InstructionSpec {
     @Override
     public void process( int level, Instruction instruction, Stack<Operand> stack, SourceCodeWriter writer, Context context ) throws DecompileException {
         byte v = (byte) instruction.getData()[1];
-        if( v == -1 ) {
-            writer.writeln( level, context.getLocalVariable( instruction.getData()[0] ) + "--;" );
+        if ( v == -1 ) {
+            writer.writeln( level, context.getLineNumber( instruction ), context.getLocalVariable( instruction.getData()[0] ) + "--;" );
         } else if ( v == 1 ) {
-            writer.writeln( level, context.getLocalVariable( instruction.getData()[0] ) + "++;" );
-        } else if( v >= 0 ){
-            writer.writeln( level, context.getLocalVariable( instruction.getData()[0] ) + " += " + v + ";" );
+            writer.writeln( level, context.getLineNumber( instruction ), context.getLocalVariable( instruction.getData()[0] ) + "++;" );
+        } else if ( v >= 0 ) {
+            writer.writeln( level, context.getLineNumber( instruction ), context.getLocalVariable( instruction.getData()[0] ) + " += " + v + ";" );
         } else {
-            writer.writeln( level, context.getLocalVariable( instruction.getData()[0] ) + " -= " + -v + ";" );
+            writer.writeln( level, context.getLineNumber( instruction ), context.getLocalVariable( instruction.getData()[0] ) + " -= " + -v + ";" );
         }
     }
 }

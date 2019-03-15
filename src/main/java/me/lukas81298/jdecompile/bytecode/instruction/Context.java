@@ -1,5 +1,6 @@
 package me.lukas81298.jdecompile.bytecode.instruction;
 
+import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TIntObjectMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,17 @@ public class Context {
 
     private final ConstantPool constantPool;
     private final TIntObjectMap<LocalVariableTableAttribute.LocalVariable> variables;
+    private final TIntIntMap lineNumbers;
     private final Set<String> scopeDefinedVars = new HashSet<>();
     private final ClassFile classFile;
+
+    public int getLineNumber( Instruction instruction ) {
+        return this.lineNumbers.get( instruction.getPc() );
+    }
+
+    public int getLineNumber( int pc ) {
+        return this.lineNumbers.get( pc );
+    }
 
     public String getLocalVariableType( int id, SourceCodeWriter writer ) throws DecompileException {
         LocalVariableTableAttribute.LocalVariable variable = this.variables.get( id );

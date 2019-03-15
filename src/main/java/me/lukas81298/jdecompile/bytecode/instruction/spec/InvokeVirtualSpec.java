@@ -36,10 +36,10 @@ public class InvokeVirtualSpec extends InstructionSpec {
             }
             sb.append( writer.removeBrackets( Objects.toString( stack.pop().getValue() ) ) );
         }
-        this.handle( stack, ref.getClassInfo(), name, sb.toString(), writer, returnType.equals( "void" ), level );
+        this.handle( context, instruction, stack, ref.getClassInfo(), name, sb.toString(), writer, returnType.equals( "void" ), level );
     }
 
-    protected void handle( Stack<Operand> stack, ConstantClass classInfo, String name, String params, SourceCodeWriter writer, boolean isVoid, int level ) throws DecompileException {
+    protected void handle( Context context, Instruction instruction, Stack<Operand> stack, ConstantClass classInfo, String name, String params, SourceCodeWriter writer, boolean isVoid, int level ) throws DecompileException {
         if ( isVoid ) {
             writer.writeln( level, stack.pop().getValue() + "." + name + "(" + params + ");" );
         } else {

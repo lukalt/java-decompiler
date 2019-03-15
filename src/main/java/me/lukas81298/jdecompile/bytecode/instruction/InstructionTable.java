@@ -125,6 +125,11 @@ public class InstructionTable {
         this.register( "pop", 0x57, 0, PopSpec.class );
         this.register( "pop2", 0x58, 0, Pop2Spec.class );
         this.register( "dup", 0x59, 0, DupSpec.class );
+        this.register( "dup_x1", 0x5a, 0, Dupx1Spec.class );
+        // dup_x2
+        this.register( "dup2", 0x5c, 0, Dup2Spec.class );
+        // dup2_x1
+        // dup2_x2
         this.register( "swap", 0x5f, 0, SwapSpec.class );
         this.register( "iadd", 0x60, 0, BinaryOpSpec.class, "+" );
         this.register( "ladd", 0x61, 0, BinaryOpSpec.class, "+" );
@@ -166,6 +171,10 @@ public class InstructionTable {
         this.register( "fshr", 0x7e, 0, BinaryOpSpec.class, ">>" );
         this.register( "dshr", 0x7f, 0, BinaryOpSpec.class, ">" );
 
+        this.register( "ior", 0x80, 0, BinaryOpSpec.class, "|" );
+        this.register( "lor", 0x81, 0, BinaryOpSpec.class, "|" );
+        this.register( "ixor", 0x82, 0, BinaryOpSpec.class, "^" );
+        this.register( "lxor", 0x83, 0, BinaryOpSpec.class, "^" );
         this.register( "iinc", 0x84, 2, IincSpec.class );
         this.register( "i2l", 0x85, 0, PrimitiveCastSpec.class, OperandType.LONG );
         this.register( "i2f", 0x86, 0, PrimitiveCastSpec.class, OperandType.FLOAT );
